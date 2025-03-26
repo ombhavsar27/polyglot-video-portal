@@ -7,6 +7,8 @@ interface ResultsSummaryProps {
 }
 
 const ResultsSummary: React.FC<ResultsSummaryProps> = ({ filesCount, languagesCount }) => {
+  const totalTranslations = filesCount * languagesCount;
+  
   return (
     <div className="bg-muted/30 rounded-xl p-4 border">
       <div className="flex justify-between items-center">
@@ -17,7 +19,7 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({ filesCount, languagesCo
           </p>
         </div>
         <div className="text-2xl font-semibold">
-          {filesCount * (languagesCount || 0)}
+          {totalTranslations}
         </div>
       </div>
     </div>

@@ -93,13 +93,13 @@ export const useTranslation = () => {
       );
 
       // Convert API response to TranslatedVideo format
-      const videos: TranslatedVideo[] = response.videos.map(video => ({
-        id: `${video.originalFileName}-${video.language}-${Math.random().toString(36).substring(2, 9)}`,
-        title: video.title,
-        src: video.url,
-        language: getLanguageName(video.language),
-        originalFileName: video.originalFileName,
-        downloadUrl: video.url,
+      const videos: TranslatedVideo[] = response.translated_videos.map(video => ({
+        id: `${video.filename}-${Math.random().toString(36).substring(2, 9)}`,
+        title: video.title || video.filename,
+        src: video.download_url,
+        language: video.language ? getLanguageName(video.language) : "Unknown",
+        originalFileName: video.originalFileName || video.filename,
+        downloadUrl: video.download_url,
       }));
 
       setTranslatedVideos(videos);

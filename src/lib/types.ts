@@ -44,14 +44,17 @@ export interface TranslationRequest {
   targetLanguages: LanguageCode[];
 }
 
-// Translation response
+// Translation response from FastAPI backend
 export interface TranslationResponse {
   id: string;
-  videos: {
-    language: LanguageCode;
-    url: string;
-    originalFileName: string;
-    title: string;
+  message?: string;
+  processing_time?: string;
+  translated_videos: {
+    filename: string;
+    download_url: string;
+    originalFileName?: string;
+    title?: string;
+    language?: LanguageCode;
   }[];
 }
 

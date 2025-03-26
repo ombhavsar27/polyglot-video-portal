@@ -41,7 +41,9 @@ export const batchTranslateVideos = async (
     // Create a mock response that matches the FastAPI format
     const mockResponse: TranslationResponse = {
       id: `job-${Math.random().toString(36).substring(2, 9)}`,
-      videos: []
+      message: "Translation completed",
+      processing_time: "00:05:23",
+      translated_videos: []
     };
     
     // Generate mock video entries for each combination of original video and target language
@@ -66,11 +68,12 @@ export const batchTranslateVideos = async (
         const langName = languageMap[lang] || lang;
         const videoTitle = video.name.split('.').slice(0, -1).join('.');
         
-        mockResponse.videos.push({
-          language: lang,
-          url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", // Sample video URL
+        mockResponse.translated_videos.push({
+          filename: `${videoTitle}_${lang}.mp4`,
+          download_url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", // Sample video URL
           originalFileName: video.name,
           title: `${videoTitle} (${langName})`,
+          language: lang
         });
       });
     });
@@ -92,4 +95,3 @@ export const getVideoDownloadUrl = (filename: string): string => {
   // For this demo, we're using a mock URL
   return `/download/${filename}`;
 };
-
