@@ -12,6 +12,7 @@ export const useTranslation = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processComplete, setProcessComplete] = useState(false);
   const [translatedVideos, setTranslatedVideos] = useState<TranslatedVideo[]>([]);
+  const [processingProgress, setProcessingProgress] = useState(0);
 
   // Handle file upload
   const handleFilesChange = (newFiles: File[]) => {
@@ -79,6 +80,7 @@ export const useTranslation = () => {
     setIsProcessing(true);
     setProcessComplete(false);
     setTranslatedVideos([]);
+    setProcessingProgress(0);
 
     toast.info("Translation process started", {
       description: `Translating ${files.length} videos to ${targetLanguages.length} languages`,
@@ -126,11 +128,12 @@ export const useTranslation = () => {
     setIsProcessing(false);
     setProcessComplete(false);
     setTranslatedVideos([]);
+    setProcessingProgress(0);
   };
 
-  // Make sure we expose setProcessComplete for the TranslationProcessing component
-  const updateProcessComplete = (value: boolean) => {
-    setProcessComplete(value);
+  // Update processing progress
+  const updateProcessingProgress = (progress: number) => {
+    setProcessingProgress(progress);
   };
 
   return {
@@ -140,11 +143,13 @@ export const useTranslation = () => {
     isProcessing,
     processComplete,
     translatedVideos,
+    processingProgress,
     handleFilesChange,
     handleSourceLanguageChange,
     handleTargetLanguagesChange,
     handleTranslate,
     handleReset,
-    setProcessComplete: updateProcessComplete
+    setProcessComplete,
+    updateProcessingProgress
   };
 };

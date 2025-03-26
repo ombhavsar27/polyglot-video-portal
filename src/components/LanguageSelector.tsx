@@ -34,7 +34,7 @@ interface LanguageSelectorProps {
   onTargetLanguagesChange: (languages: string[]) => void;
 }
 
-// Language data
+// Language data formatted as expected by the FastAPI backend
 const languages = [
   { code: "auto", name: "Auto Detect" },
   { code: "en", name: "English" },
@@ -93,7 +93,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
               <SelectLabel>Languages</SelectLabel>
               {languages.map((language) => (
                 <SelectItem key={language.code} value={language.code}>
-                  {language.name}
+                  {language.name} {language.code !== "auto" ? `(${language.code})` : ""}
                 </SelectItem>
               ))}
             </SelectGroup>
@@ -118,7 +118,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                 <div className="flex flex-wrap gap-1">
                   {targetLanguages.map((code) => (
                     <Badge key={code} variant="secondary" className="mr-1 mb-1">
-                      {languages.find((lang) => lang.code === code)?.name || code}
+                      {languages.find((lang) => lang.code === code)?.name || code} ({code})
                     </Badge>
                   ))}
                 </div>
@@ -154,7 +154,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                             <Check className="h-3 w-3" />
                           )}
                         </div>
-                        {language.name}
+                        {language.name} ({language.code})
                       </CommandItem>
                     ))}
                 </CommandGroup>

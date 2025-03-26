@@ -43,6 +43,7 @@ const TranslationProcessing: React.FC<TranslationProcessingProps> = ({
     // Status messages to cycle through
     const statusMessages = [
       "Preparing videos...",
+      "Uploading videos to server...",
       "Extracting audio...",
       "Processing source language...",
       "Transcribing content...",
