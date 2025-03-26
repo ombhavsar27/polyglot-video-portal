@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Header from "@/components/Header";
 import FileUploader from "@/components/FileUploader";
@@ -8,12 +7,14 @@ import TranslatedVideoGrid, { TranslatedVideo } from "@/components/TranslatedVid
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Globe, Upload } from "lucide-react";
+import { batchTranslateVideos } from "@/lib/api";
+import { LanguageCode } from "@/lib/types";
 
 const Index = () => {
   // State management
   const [files, setFiles] = useState<File[]>([]);
-  const [sourceLanguage, setSourceLanguage] = useState("auto");
-  const [targetLanguages, setTargetLanguages] = useState<string[]>([]);
+  const [sourceLanguage, setSourceLanguage] = useState<LanguageCode>("auto");
+  const [targetLanguages, setTargetLanguages] = useState<LanguageCode[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processComplete, setProcessComplete] = useState(false);
   const [translatedVideos, setTranslatedVideos] = useState<TranslatedVideo[]>([]);
@@ -31,16 +32,16 @@ const Index = () => {
 
   // Handle source language change
   const handleSourceLanguageChange = (language: string) => {
-    setSourceLanguage(language);
+    setSourceLanguage(language as LanguageCode);
   };
 
   // Handle target languages change
   const handleTargetLanguagesChange = (languages: string[]) => {
-    setTargetLanguages(languages);
+    setTargetLanguages(languages as LanguageCode[]);
   };
 
   // Handle translation submission
-  const handleTranslate = () => {
+  const handleTranslate = async () => {
     // Validate inputs
     if (files.length === 0) {
       toast.error("Please upload at least one video file");
@@ -57,59 +58,70 @@ const Index = () => {
     setProcessComplete(false);
     setTranslatedVideos([]);
 
-    // In a real implementation, this would make API calls to the backend
-    // For this demo, we'll simulate the process and generate mock results
-    
     toast.info("Translation process started", {
       description: `Translating ${files.length} videos to ${targetLanguages.length} languages`,
     });
+
+    try {
+      // Call the API to translate videos
+      const response = await batchTranslateVideos(
+        files,
+        sourceLanguage,
+        targetLanguages
+      );
+
+      // Convert API response to TranslatedVideo format
+      const videos: TranslatedVideo[] = response.videos.map(video => ({
+        id: `${video.originalFileName}-${video.language}-${Math.random().toString(36).substring(2, 9)}`,
+        title: video.title,
+        src: video.url,
+        language: getLanguageName(video.language),
+        originalFileName: video.originalFileName,
+        downloadUrl: video.url,
+      }));
+
+      setTranslatedVideos(videos);
+      setProcessComplete(true);
+      
+      toast.success("Translation complete!", {
+        description: `${videos.length} videos have been translated successfully`,
+      });
+    } catch (error) {
+      console.error("Translation error:", error);
+      toast.error("Translation failed", {
+        description: "There was an error translating your videos. Please try again.",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
-  // Handle processing completion
-  const handleProcessingComplete = () => {
-    setIsProcessing(false);
-    setProcessComplete(true);
+  // Helper function to get language name from code
+  const getLanguageName = (code: LanguageCode): string => {
+    const languageMap: Record<string, string> = {
+      en: "English",
+      es: "Spanish",
+      fr: "French",
+      de: "German",
+      it: "Italian",
+      pt: "Portuguese",
+      ru: "Russian",
+      zh: "Chinese",
+      ja: "Japanese",
+      ko: "Korean",
+      ar: "Arabic",
+      hi: "Hindi",
+      bn: "Bengali",
+      pa: "Punjabi",
+      te: "Telugu",
+      tr: "Turkish",
+      vi: "Vietnamese",
+      th: "Thai",
+      id: "Indonesian",
+      auto: "Auto-detected",
+    };
     
-    // Generate mock translated videos
-    const mockVideos: TranslatedVideo[] = [];
-    
-    // For each original file and target language, create a mock translated video
-    files.forEach((file) => {
-      targetLanguages.forEach((langCode) => {
-        // Determine language name for display
-        const languageMap: Record<string, string> = {
-          en: "English",
-          es: "Spanish",
-          fr: "French",
-          de: "German",
-          it: "Italian",
-          pt: "Portuguese",
-          ru: "Russian",
-          zh: "Chinese",
-          ja: "Japanese",
-          ko: "Korean",
-          ar: "Arabic",
-          hi: "Hindi",
-        };
-        
-        const langName = languageMap[langCode] || langCode;
-        
-        // Create a mock video entry
-        mockVideos.push({
-          id: `${file.name}-${langCode}-${Math.random().toString(36).substring(2, 9)}`,
-          title: `${file.name.split('.').slice(0, -1).join('.')}`,
-          src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", // Sample video
-          language: langName,
-          originalFileName: file.name,
-        });
-      });
-    });
-    
-    setTranslatedVideos(mockVideos);
-    
-    toast.success("Translation complete!", {
-      description: `${mockVideos.length} videos have been translated successfully`,
-    });
+    return languageMap[code] || code;
   };
 
   // Reset the application state
@@ -197,7 +209,7 @@ const Index = () => {
           isProcessing={isProcessing}
           totalVideos={files.length}
           totalLanguages={targetLanguages.length}
-          onComplete={handleProcessingComplete}
+          onComplete={() => setProcessComplete(true)}
         />
         
         {/* Results View */}

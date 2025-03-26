@@ -11,6 +11,7 @@ export interface TranslatedVideo {
   src: string;
   language: string;
   originalFileName: string;
+  downloadUrl?: string;
 }
 
 interface TranslatedVideoGridProps {
@@ -19,15 +20,32 @@ interface TranslatedVideoGridProps {
 
 const TranslatedVideoGrid: React.FC<TranslatedVideoGridProps> = ({ videos }) => {
   const handleDownload = (video: TranslatedVideo) => {
-    // In a real implementation, this would trigger the actual download
-    // Here we're just showing a toast to simulate the download
-    toast.success(`Downloading ${video.title} in ${video.language}`);
+    if (video.downloadUrl) {
+      // Create a temporary anchor element to trigger download
+      const anchor = document.createElement('a');
+      anchor.href = video.downloadUrl;
+      anchor.download = `${video.title}.mp4`;
+      anchor.target = '_blank';
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      
+      toast.success(`Downloading ${video.title}`);
+    } else {
+      toast.error(`Download URL not available for ${video.title}`);
+    }
+  };
+
+  const handleDownloadAll = () => {
+    toast.info("Downloading all videos...");
     
-    // Mock implementation - in real code, we'd actually download the file
-    // Simulating a delay before "completing" the download
-    setTimeout(() => {
-      toast.info(`${video.title} download complete`);
-    }, 3000);
+    // In a real implementation, we might use a zip library to bundle all videos
+    // For this demo, we'll just trigger individual downloads with a small delay
+    videos.forEach((video, index) => {
+      setTimeout(() => {
+        handleDownload(video);
+      }, index * 1000); // 1 second delay between downloads
+    });
   };
 
   if (videos.length === 0) {
@@ -40,7 +58,7 @@ const TranslatedVideoGrid: React.FC<TranslatedVideoGridProps> = ({ videos }) => 
         <h2 className="text-2xl font-semibold">Translated Videos</h2>
         <Button 
           variant="outline" 
-          onClick={() => toast.info("Downloading all videos...")}
+          onClick={handleDownloadAll}
           className="group"
         >
           <Download className="mr-2 h-4 w-4 transition-transform group-hover:-translate-y-1" />

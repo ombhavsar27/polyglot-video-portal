@@ -1,69 +1,95 @@
 
 // API client for interacting with the translation backend
 
-/**
- * Translates a video from source language to target language
- * @param video The video file to translate
- * @param sourceLanguage The source language code
- * @param targetLanguage The target language code
- * @returns A promise resolving to the translated video URL
- */
-export const translateVideo = async (
-  video: File,
-  sourceLanguage: string,
-  targetLanguage: string
-): Promise<string> => {
-  try {
-    const formData = new FormData();
-    formData.append("video", video);
-    formData.append("source_language", sourceLanguage);
-    formData.append("target_language", targetLanguage);
-    
-    // In a real implementation, this would make an actual API call
-    // For this demo, we're returning a mock video URL after a delay
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Return a sample video URL (in a real app, this would be the response from the API)
-    return "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-  } catch (error) {
-    console.error("Error translating video:", error);
-    throw new Error("Failed to translate video");
-  }
-};
+import { LanguageCode, TranslationRequest, TranslationResponse } from "./types";
 
 /**
- * Batch translates multiple videos to multiple languages
- * This would be implemented in a real backend
+ * Translates multiple videos from source language to multiple target languages
+ * @param videos The video files to translate
+ * @param sourceLanguage The source language code
+ * @param targetLanguages The target language codes
+ * @returns A promise resolving to the translation response
  */
 export const batchTranslateVideos = async (
   videos: File[],
-  sourceLanguage: string,
-  targetLanguages: string[]
-): Promise<{ videoUrl: string; language: string; originalFile: string }[]> => {
+  sourceLanguage: LanguageCode,
+  targetLanguages: LanguageCode[]
+): Promise<TranslationResponse> => {
   try {
-    // In a real implementation, this would use a more efficient batch API
+    // In a real implementation, this would make an actual API call
     // For this demo, we're returning mock results after a delay
     
-    // Simulate API delay
+    // Create a FormData object to send the videos and parameters
+    const formData = new FormData();
+    
+    // Append each video file
+    videos.forEach(video => {
+      formData.append("videos", video);
+    });
+    
+    // Append the source language
+    formData.append("source_language", sourceLanguage);
+    
+    // Append each target language
+    targetLanguages.forEach(lang => {
+      formData.append("target_languages", lang);
+    });
+    
+    // Simulate API delay for demo
     await new Promise(resolve => setTimeout(resolve, 5000));
     
-    // Generate mock results
-    const results = [];
-    for (const video of videos) {
-      for (const targetLang of targetLanguages) {
-        results.push({
-          videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-          language: targetLang,
-          originalFile: video.name,
-        });
-      }
-    }
+    // Create a mock response that matches the FastAPI format
+    const mockResponse: TranslationResponse = {
+      id: `job-${Math.random().toString(36).substring(2, 9)}`,
+      videos: []
+    };
     
-    return results;
+    // Generate mock video entries for each combination of original video and target language
+    videos.forEach(video => {
+      targetLanguages.forEach(lang => {
+        const languageMap: Record<string, string> = {
+          en: "English",
+          es: "Spanish",
+          fr: "French",
+          de: "German",
+          it: "Italian",
+          pt: "Portuguese",
+          ru: "Russian",
+          zh: "Chinese",
+          ja: "Japanese",
+          ko: "Korean",
+          ar: "Arabic",
+          hi: "Hindi",
+          auto: "Auto-detected",
+        };
+        
+        const langName = languageMap[lang] || lang;
+        const videoTitle = video.name.split('.').slice(0, -1).join('.');
+        
+        mockResponse.videos.push({
+          language: lang,
+          url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", // Sample video URL
+          originalFileName: video.name,
+          title: `${videoTitle} (${langName})`,
+        });
+      });
+    });
+    
+    return mockResponse;
   } catch (error) {
     console.error("Error batch translating videos:", error);
     throw new Error("Failed to batch translate videos");
   }
 };
+
+/**
+ * Gets the download URL for a translated video
+ * @param filename The filename of the translated video
+ * @returns The download URL
+ */
+export const getVideoDownloadUrl = (filename: string): string => {
+  // In a real implementation, this would use the actual backend URL
+  // For this demo, we're using a mock URL
+  return `/download/${filename}`;
+};
+
