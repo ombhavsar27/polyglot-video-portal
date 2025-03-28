@@ -78,24 +78,24 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFilesChange }) => {
   });
 
   return (
-    <div className="w-full space-y-4 animate-fade-in">
+    <div className="w-full space-y-4 animate-fade-in p-6">
       <div
         {...getRootProps()}
         className={`border-2 border-dashed rounded-xl p-8 transition-all duration-300 text-center cursor-pointer ${
           isDragging || isDragActive
-            ? "border-primary bg-primary/5"
-            : "border-border hover:border-primary/50 hover:bg-secondary/50"
+            ? "border-[#3046a5] bg-[#3046a5]/5"
+            : "border-border hover:border-[#3046a5]/50 hover:bg-[#e9effd]"
         }`}
       >
         <input {...getInputProps()} />
         <div className="flex flex-col items-center space-y-4">
           <Upload
             className={`h-12 w-12 transition-all duration-300 ${
-              isDragging || isDragActive ? "text-primary" : "text-muted-foreground"
+              isDragging || isDragActive ? "text-[#3046a5]" : "text-muted-foreground"
             }`}
           />
           <div className="space-y-1">
-            <h3 className="text-lg font-medium">
+            <h3 className="text-lg font-medium text-[#1a2b6d] dark:text-white">
               {isDragging || isDragActive ? "Drop videos here" : "Upload Videos"}
             </h3>
             <p className="text-sm text-muted-foreground">
@@ -105,16 +105,16 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFilesChange }) => {
               Supports MP4, AVI, MKV, MOV, WMV
             </p>
           </div>
-          <Button variant="secondary" size="sm" className="mt-2">
+          <Button variant="secondary" size="sm" className="mt-2 bg-[#e9effd] text-[#3046a5] hover:bg-[#3046a5] hover:text-white">
             Select Files
           </Button>
         </div>
       </div>
 
       {files.length > 0 && (
-        <div className="border rounded-xl overflow-hidden bg-card animate-slide-in">
-          <div className="p-4 border-b bg-muted/30">
-            <h3 className="font-medium">Uploaded Videos ({files.length})</h3>
+        <div className="border rounded-xl overflow-hidden bg-white dark:bg-card animate-slide-in">
+          <div className="p-4 border-b bg-[#f8fafc] dark:bg-muted/30">
+            <h3 className="font-medium text-[#1a2b6d] dark:text-white">Uploaded Videos ({files.length})</h3>
           </div>
           <ul className="divide-y">
             {files.map((file, index) => (
@@ -124,7 +124,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFilesChange }) => {
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="flex items-center space-x-3">
-                  <File className="h-5 w-5 text-primary" />
+                  <File className="h-5 w-5 text-[#3046a5]" />
                   <div className="space-y-1">
                     <p className="text-sm font-medium truncate max-w-[200px] sm:max-w-xs">
                       {file.name}

@@ -65,7 +65,7 @@ const Index = () => {
                 variant="outline" 
                 size="lg"
                 onClick={handleReset}
-                className="animate-fade-in"
+                className="animate-fade-in border-[#3046a5] text-[#3046a5] hover:bg-[#3046a5] hover:text-white"
               >
                 Translate More Videos
               </Button>

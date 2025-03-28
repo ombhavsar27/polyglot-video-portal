@@ -1,4 +1,3 @@
-
 import React from "react";
 import VideoPlayer from "./VideoPlayer";
 import { Button } from "@/components/ui/button";
@@ -57,9 +56,8 @@ const TranslatedVideoGrid: React.FC<TranslatedVideoGridProps> = ({ videos }) => 
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Translated Videos</h2>
         <Button 
-          variant="outline" 
+          className="bg-[#3046a5] hover:bg-[#2a3d8f] text-white group"
           onClick={handleDownloadAll}
-          className="group"
         >
           <Download className="mr-2 h-4 w-4 transition-transform group-hover:-translate-y-1" />
           Download All

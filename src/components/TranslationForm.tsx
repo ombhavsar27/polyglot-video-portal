@@ -31,12 +31,14 @@ const TranslationForm: React.FC<TranslationFormProps> = ({
   return (
     <div className="grid md:grid-cols-5 gap-8">
       <div className="md:col-span-3 space-y-6">
-        <FileUploader onFilesChange={onFilesChange} />
+        <div className="bg-gradient-to-b from-[#f8fafc] to-[#f1f5f9] dark:from-[#1e293b] dark:to-[#0f172a] border border-[#e2e8f0] dark:border-[#334155] rounded-xl shadow-sm overflow-hidden">
+          <FileUploader onFilesChange={onFilesChange} />
+        </div>
       </div>
       
       <div className="md:col-span-2 space-y-6">
-        <div className="bg-card border rounded-xl p-6 shadow-sm">
-          <h2 className="text-xl font-semibold mb-4">Translation Settings</h2>
+        <div className="bg-gradient-to-b from-[#f8fafc] to-[#f1f5f9] dark:from-[#1e293b] dark:to-[#0f172a] border border-[#e2e8f0] dark:border-[#334155] rounded-xl p-6 shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-[#1a2b6d] dark:text-white">Translation Settings</h2>
           <LanguageSelector
             sourceLanguage={sourceLanguage}
             onSourceLanguageChange={onSourceLanguageChange}
@@ -48,7 +50,7 @@ const TranslationForm: React.FC<TranslationFormProps> = ({
             <Button 
               onClick={onTranslate} 
               disabled={files.length === 0 || targetLanguages.length === 0 || isProcessing}
-              className="w-full h-12 text-base group"
+              className="w-full h-12 text-base group bg-[#3046a5] hover:bg-[#2a3d8f] text-white"
             >
               <Upload className="mr-2 h-5 w-5 transition-all group-hover:-translate-y-1 group-hover:translate-x-1" />
               Translate Videos
